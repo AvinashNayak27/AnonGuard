@@ -4,7 +4,6 @@ import Home from './Home';
 
 export default function App() {
   const [ready, setReady] = useState(false);
-  const [useTestAadhaar, setUseTestAadhaar] = useState(false);
 
   useEffect(() => {
     setReady(true);
@@ -13,8 +12,8 @@ export default function App() {
   return (
     <>
       {ready && (
-        <AnonAadhaarProvider _useTestAadhaar={useTestAadhaar}>
-          <Home setUseTestAadhaar={setUseTestAadhaar} useTestAadhaar={useTestAadhaar} />
+        <AnonAadhaarProvider>
+          <Home  />
         </AnonAadhaarProvider>
       )}
     </>
