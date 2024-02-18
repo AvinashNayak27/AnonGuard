@@ -145,17 +145,21 @@ export default function Home() {
     },
   ];
 
-  const { data: txHash, writeContract } = useWriteContract();
+  const { data: txHash, writeContract,error,isError } = useWriteContract();
 
   const claimUBI = async (userNullifier) => {
     console.log("Claiming UBI for userNullifier: ", userNullifier);
     const data = writeContract({
-      address: "0x1407Ce76cc813363790d083b10E003c8eA69DD83",
+      address: "0x745D2b92994fe24d6a935ADa85024A498F634ea4",
       abi: wagmigotchiABI,
       functionName: "claimUBI",
       args: [userNullifier],
     });
     console.log("Data: ", data);
+    if(error){
+      alert("Erroor occured while claiming UBI check console for more details")
+      console.log("Error: ",error)
+    }
   };
 
   return (
