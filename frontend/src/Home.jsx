@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   AnonAadhaarProof,
   LogInWithAnonAadhaar,
-  useAnonAadhaar
+  useAnonAadhaar,
 } from "@anon-aadhaar/react";
-import { packGroth16Proof, verify } from '@anon-aadhaar/core';
-import { ConnectKitButton } from 'connectkit';
-import { useAccount, useContractWrite } from 'wagmi';
+import { packGroth16Proof, verify } from "@anon-aadhaar/core";
+import { ConnectKitButton } from "connectkit";
+import { useAccount, useContractWrite, useWriteContract } from "wagmi";
 
 export default function Home() {
   const [anonAadhaar] = useAnonAadhaar();
@@ -32,176 +32,140 @@ export default function Home() {
 
   const wagmigotchiABI = [
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_anon",
-          "type": "address"
-        }
-      ],
-      "name": "addAnon",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      inputs: [],
+      stateMutability: "nonpayable",
+      type: "constructor",
     },
     {
-      "inputs": [],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
+      anonymous: false,
+      inputs: [
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "claimant",
-          "type": "address"
+          indexed: true,
+          internalType: "address",
+          name: "claimant",
+          type: "address",
         },
         {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
+          indexed: false,
+          internalType: "uint256",
+          name: "amount",
+          type: "uint256",
+        },
       ],
-      "name": "Claimed",
-      "type": "event"
+      name: "Claimed",
+      type: "event",
     },
     {
-      "inputs": [
+      inputs: [
         {
-          "internalType": "uint256",
-          "name": "userNullifier",
-          "type": "uint256"
-        }
+          internalType: "uint256",
+          name: "userNullifier",
+          type: "uint256",
+        },
       ],
-      "name": "claimUBI",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      name: "claimUBI",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
     },
     {
-      "inputs": [],
-      "name": "depositFunds",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
+      inputs: [],
+      name: "depositFunds",
+      outputs: [],
+      stateMutability: "payable",
+      type: "function",
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_anon",
-          "type": "address"
-        }
-      ],
-      "name": "removeAnon",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      stateMutability: "payable",
+      type: "receive",
     },
     {
-      "stateMutability": "payable",
-      "type": "receive"
+      inputs: [],
+      name: "claimAmount",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
     },
     {
-      "inputs": [],
-      "name": "claimAmount",
-      "outputs": [
+      inputs: [
         {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
       ],
-      "stateMutability": "view",
-      "type": "function"
+      name: "hasAddressClaimed",
+      outputs: [
+        {
+          internalType: "bool",
+          name: "",
+          type: "bool",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
     },
     {
-      "inputs": [
+      inputs: [
         {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
       ],
-      "name": "hasAddressClaimed",
-      "outputs": [
+      name: "hasClaimed",
+      outputs: [
         {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
+          internalType: "bool",
+          name: "",
+          type: "bool",
+        },
       ],
-      "stateMutability": "view",
-      "type": "function"
+      stateMutability: "view",
+      type: "function",
     },
     {
-      "inputs": [
+      inputs: [],
+      name: "owner",
+      outputs: [
         {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
       ],
-      "name": "hasClaimed",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+      stateMutability: "view",
+      type: "function",
     },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "isAnon",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    }
-  ]
+  ];
 
-  const { data, isLoading, isSuccess, write } = useContractWrite({
-    address: '0x2fe4f8376504028796ab2A27ABD9Fe304A281a3A',
-    abi: wagmigotchiABI,
-    functionName: 'claimUBI',
-  })
+  const { data: txHash, writeContract } = useWriteContract();
 
+  const claimUBI = async (userNullifier) => {
+    console.log("Claiming UBI for userNullifier: ", userNullifier);
+    const data = writeContract({
+      address: "0x1407Ce76cc813363790d083b10E003c8eA69DD83",
+      abi: wagmigotchiABI,
+      functionName: "claimUBI",
+      args: [userNullifier],
+    });
+    console.log("Data: ", data);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-8">
       <main className="flex flex-col items-center gap-8 bg-white rounded-2xl max-w-screen-sm mx-auto h-[24rem] md:h-[20rem] p-8">
         <h1 className="font-bold text-2xl">Welcome to Anon UBI </h1>
-        <p>Prove your Identity anonymously using your Aadhaar card and claim your ETH</p>
+        <p>
+          Prove your Identity anonymously using your Aadhaar card and claim your
+          ETH
+        </p>
         <ConnectKitButton />
 
         {isConnected && <LogInWithAnonAadhaar />}
@@ -212,19 +176,12 @@ export default function Home() {
             <>Welcome anon!</>
             <p>✅ Proof is valid</p>
             <button
-              disabled={!write}
-              onClick={() =>
-                write({
-                  args: [userNullifier],
-                })
-              }
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => claimUBI(userNullifier)}
             >
-              Claim
+              Claim UBI
             </button>
-
-            <AnonAadhaarProof
-              code={JSON.stringify(anonAadhaar.anonAadhaarProof, null, 2)}
-            />
+            {txHash && <p>Transaction Hash: {txHash}</p>}
           </>
         )}
       </div>
