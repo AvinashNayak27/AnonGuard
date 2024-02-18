@@ -6,7 +6,7 @@ import {
 } from "@anon-aadhaar/react";
 import { packGroth16Proof, verify } from '@anon-aadhaar/core';
 import { ConnectKitButton } from 'connectkit';
-import { useAccount } from 'wagmi';
+import { useAccount, useContractWrite } from 'wagmi';
 
 export default function Home() {
   const [anonAadhaar] = useAnonAadhaar();
@@ -30,10 +30,172 @@ export default function Home() {
     }
   }, [anonAadhaar, proof]);
 
+  const wagmigotchiABI = [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_anon",
+          "type": "address"
+        }
+      ],
+      "name": "addAnon",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "claimant",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Claimed",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "userNullifier",
+          "type": "uint256"
+        }
+      ],
+      "name": "claimUBI",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "depositFunds",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_anon",
+          "type": "address"
+        }
+      ],
+      "name": "removeAnon",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    },
+    {
+      "inputs": [],
+      "name": "claimAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "hasAddressClaimed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "hasClaimed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "isAnon",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
 
-  const ClaimUBI = async (userNullifier) => {
-    console.log("Claiming UBI for userNullifier: ", userNullifier);
-  }
+  const { data, isLoading, isSuccess, write } = useContractWrite({
+    address: '0x2fe4f8376504028796ab2A27ABD9Fe304A281a3A',
+    abi: wagmigotchiABI,
+    functionName: 'claimUBI',
+  })
+
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-8">
@@ -49,7 +211,16 @@ export default function Home() {
           <>
             <>Welcome anon!</>
             <p>✅ Proof is valid</p>
-            <button onClick={() => ClaimUBI(userNullifier)}>Claim UBI</button>
+            <button
+              disabled={!write}
+              onClick={() =>
+                write({
+                  args: [userNullifier],
+                })
+              }
+            >
+              Claim
+            </button>
 
             <AnonAadhaarProof
               code={JSON.stringify(anonAadhaar.anonAadhaarProof, null, 2)}
